@@ -1,0 +1,30 @@
+@api_view(["GET"])
+def load_data(request):
+    API_URL = setting("FOOTBALL_URL")
+    headers = {"X-Auth-Token": "deb08a34530649d3a2d946b13b18712d"}
+    response = requests.get(
+        API_URL + "competitions/PL/matches?status=SCHEDULED", headers=headers
+    )
+    data = json.loads(response.content)
+    matches = data["matches"]
+
+    for match in matches:
+        homeTeamId = match["homeTeam"]["id"]
+        awayTeamId = match["awayTeam"]["id"]
+        if not Match.objects.filter(pk=match["id"]).exists():
+            if not Team.objects.filter(team_id=homeTeamId).first():
+                create_team(homeTeamId)
+            if not Team.objects.filter(team_id=awayTeamId).first():
+                create_team(team_id=awayTeamId)
+            date = datetime.strptime(match["utcDate"], "%Y-%m-%dT%H:%M:%SZ")
+            homeTeam = Team.objects.filter(team_id=homeTeamId).first()
+            awayTeam = Team.objects.filter(team_id=awayTeamId).first()
+            m = Match.objects.create(
+                match_id=match["id"],
+                homeTeam=homeTeam,
+                awayTeam=awayTeam,
+                gameweek=match["matchday"],
+                date=date,
+            )
+            m.save()
+    return Response(matches)

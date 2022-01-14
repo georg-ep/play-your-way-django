@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 import json
 from .models import Match, SeasonInfo, Team, Player
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, tzinfo
 from football import serializers
 import django_filters.rest_framework
 

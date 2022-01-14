@@ -23,6 +23,14 @@ def on_worker_shutdown(*_, **__):
     redis_storage.connection.close()
 
 
+from celery.signals import worker_ready
+@worker_ready.connect
+def at_start(sender, **k):
+    with sender.app.connection() as conn:
+         sender.app.send_task('fetch-current-gameweek')
+         sender.app.send_task('fetch-games-data')
+
+
 """
 FLOW
 
@@ -50,7 +58,7 @@ def fetch_current_gameweek():
         seasonInfo = SeasonInfo(gameweek=matchWeek)
         seasonInfo.save()
         print("Season info created, gameweek is updated")
-
+    print("Success, current gameweek is", seasonInfo.gameweek)
 
 
 @shared_task(name="fetch-live-game")
@@ -64,10 +72,11 @@ def fetch_live_game(match_id):
     winner = None
     match.status = data["status"]
     if data["score"]["winner"] == "HOME_TEAM":
-          winner = data["homeTeam"]["id"]
+        winner = data["homeTeam"]["id"]
     if data["score"]["winner"] == "AWAY_TEAM":
-          winner = data["awayTeam"]["id"]
+        winner = data["awayTeam"]["id"]
     match.save()
+
 
 # Update data for games which have been postponed and rescheduled, 1 time a day
 @shared_task(name="fetch-games-data")
@@ -87,30 +96,29 @@ def fetch_games_data():
                 winner = match["homeTeam"]["name"]
             elif match["score"]["winner"] == "AWAY_TEAM":
                 winner = match["awayTeam"]["name"]
-            elif match["socre"]["winner"] == "DRAW":
+            elif match["score"]["winner"] == "DRAW":
                 winner = "Draw"
             else:
                 winner = None
-            match.winner = winner
+            d_match.winner = winner
 
+            score = match["score"]["fullTime"]
 
-            score = None
-            if winner == None:
-                score = False
-              
-
+            if score["homeTeam"] != d_match.home_goals or score["awayTeam"] != d_match.away_goals:
+                print("score changed for", d_match)
+                d_match.away_goals = score["awayTeam"]
+                d_match.home_goals = score["homeTeam"]
+            
 
             if d_match.status != match["status"]:
                 print("status changed for", match)
                 d_match.status = match["status"]
-                d_match.save()
-
 
             match_date = datetime.strptime(match["utcDate"], "%Y-%m-%dT%H:%M:%SZ")
             date_changed = d_match.date != match_date
             if date_changed:
-                print("date changed")
-                print("api", match_date)
-                print("dtb", d_match.date)
+                print("date changed for", d_match)
+                print("from", d_match.date, "to", match_date)
                 d_match.date = match_date
+            
             d_match.save()

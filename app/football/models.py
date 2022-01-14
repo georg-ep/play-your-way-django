@@ -64,11 +64,15 @@ class Match(models.Model):
       null=True,
       blank=True,
     )
-    score = models.CharField(
-      max_length=255,
-      default="",
-      null=True,
+    home_goals = models.PositiveIntegerField(
+      default=None,
       blank=True,
+      null=True,
+    )
+    away_goals = models.PositiveIntegerField(
+      default=None,
+      blank=True,
+      null=True,
     )
     awayTeam = models.ForeignKey(
         Team,

@@ -15,7 +15,7 @@ then
     python /app/manage.py runserver 0.0.0.0:80
 else
     python /app/manage.py migrate
-    python /app/manage.py createsuperuser --noinput
+    python /app/manage.py createsuperuser --noinput --email
     gunicorn --bind 0.0.0.0:80 --workers 1 --threads 8 --timeout 0 wsgi:application
 fi
 exec "$@"

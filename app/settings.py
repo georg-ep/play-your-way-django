@@ -14,7 +14,7 @@ location = lambda x: os.path.join(os.path.dirname(os.path.realpath(__file__)), x
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-env = environ.Env(DEBUG=(bool, False), ALLOWED_HOSTS=(list, ["*"]))
+env = environ.Env(DEBUG=(bool, True), ALLOWED_HOSTS=(list, ["*"]))
 env.read_env()
 
 # try:
@@ -42,9 +42,9 @@ SECRET_KEY = os.environ.get(
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(int(os.environ.get("DEBUG", False)))
-print(DEBUG)
-ALLOWED_HOSTS = ["localhost", "https://calm-shore-12479.herokuapp.com/"]
+DEBUG = bool(int(os.environ.get("DEBUG", True)))
+print("Debug", DEBUG)
+ALLOWED_HOSTS = ["localhost", ".herokuapp.com"]
 if DEBUG:
     ALLOWED_HOSTS += [
         "192.168.{}.{}".format(i, j) for i in range(256) for j in range(256)

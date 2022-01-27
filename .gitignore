@@ -177,6 +177,5 @@ dmypy.json
 # IntelliJ IDEA files
 *.iml
 
-docker-compose.override.yml
 app/google_cloud_access.json
 deploy.sh

@@ -18,5 +18,7 @@ COPY ./scripts /scripts
 COPY .env /.env
 RUN mkdir /tmp/runtime-user
 
+CMD gunicorn --bind 0.0.0.0:$PORT wsgi
+
 ENTRYPOINT ["/scripts/server_run.sh"]
 

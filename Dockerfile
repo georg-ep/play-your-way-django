@@ -15,6 +15,7 @@ RUN mkdir /app
 WORKDIR /app
 COPY ./app /app
 COPY ./scripts /scripts
+COPY ./env /env
 RUN mkdir /tmp/runtime-user
 
 ENTRYPOINT ["/scripts/server_run.sh"]

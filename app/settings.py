@@ -214,9 +214,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # STATIC_URL = os.environ.get("STORAGE_PUBLIC_PATH").format(GS_STATIC_BUCKET_NAME)
 # STATIC_ROOT = os.environ.get("STORAGE_STATIC_ROOT")
 
-FOOTBALL_URL = os.environ.get("FOOTBALL_URL")
+FOOTBALL_URL = "https://api.football-data.org/v2/"
 
-FRONTEND_URL = os.environ.get("FRONTEND_URL")
+FRONTEND_URL = "http://localhost:3000"
 FRONTEND_VERIFY_EMAIL_URL = FRONTEND_URL + "/verify-email"
 
 TEST_EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
@@ -232,7 +232,6 @@ EMAIL_PORT = 587
 EMAIL_HASH_SALT = PROJECT_NAME
 EMAIL_HASH_MIN_LEN = 36
 EMAIL_HASH_ALPHABET = "0123456789" + "abcdefghijklmnopqrstuvwxyz"
-FRONTEND_URL = os.environ.get("FRONTEND_URL")
 
 EMAIL_RESET_PASSWORD_TEMPLATE = "mail/user_reset_password.html"
 EMAIL_VERIFY_EMAIL_TEMPLATE = "mail/verify_email.html"

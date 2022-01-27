@@ -44,7 +44,7 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", False)))
 print(DEBUG)
-ALLOWED_HOSTS = ["localhost", "pfld-sandbox-voiuolbq7q-ey.a.run.app", "https://calm-shore-12479.herokuapp.com/"]
+ALLOWED_HOSTS = ["localhost", "https://calm-shore-12479.herokuapp.com/"]
 if DEBUG:
     ALLOWED_HOSTS += [
         "192.168.{}.{}".format(i, j) for i in range(256) for j in range(256)

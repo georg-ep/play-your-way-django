@@ -76,28 +76,39 @@ from django.utils import timezone
 def test(request):
     # lb = datetime.now(tz=timezone.utc) - timedelta(minutes=30)
     # ub = datetime.now(tz=timezone.utc) + timedelta(minutes=30)
+    API_URL = setting("FOOTBALL_URL")
+    headers = {"X-Auth-Token": "deb08a34530649d3a2d946b13b18712d"}
+    response = requests.get(API_URL + f"competitions/PL/teams/", headers=headers)
+    teams = json.loads(response.content)
+    l_teams = Team.objects.all()
+    for team in teams["teams"]:
+        l_team = l_teams.filter(team_id=team["id"]).first()
+        l_team.crest = team["crestUrl"]
+        l_team.save()
+        print("saving crest")
+      
 
-    lb = datetime.now(tz=timezone.utc)
-    ub = datetime.now(tz=timezone.utc) + timedelta(days=1)
-    print("lb", lb)
-    print("ub", ub)
-    seasonInfo = SeasonInfo.objects.first()
-    gameweek = seasonInfo.gameweek + 1
-    matches = Match.objects.filter(date__lt=ub).filter(date__gt=lb)
-    for match in matches:
-        if not PeriodicTask.objects.filter(name=f"match-{match.match_id}").exists():
-            print(f"Scheduling task for {match} at {match.date}")
-            schedule = IntervalSchedule.objects.create(
-                every=10, period=IntervalSchedule.SECONDS
-            )
-            task = PeriodicTask.objects.create(
-                interval=schedule,
-                start_time=match.date,
-                name=f"match-{match.match_id}",
-                task="fetch-live-game",
-                args=json.dumps([match.match_id]),
-            )
-            task.save()
+    # lb = datetime.now(tz=timezone.utc)
+    # ub = datetime.now(tz=timezone.utc) + timedelta(days=1)
+    # print("lb", lb)
+    # print("ub", ub)
+    # seasonInfo = SeasonInfo.objects.first()
+    # gameweek = seasonInfo.gameweek + 1
+    # matches = Match.objects.filter(date__lt=ub).filter(date__gt=lb)
+    # for match in matches:
+    #     if not PeriodicTask.objects.filter(name=f"match-{match.match_id}").exists():
+    #         print(f"Scheduling task for {match} at {match.date}")
+    #         schedule = IntervalSchedule.objects.create(
+    #             every=10, period=IntervalSchedule.SECONDS
+    #         )
+    #         task = PeriodicTask.objects.create(
+    #             interval=schedule,
+    #             start_time=match.date,
+    #             name=f"match-{match.match_id}",
+    #             task="fetch-live-game",
+    #             args=json.dumps([match.match_id]),
+    #         )
+    #         task.save()
     # task = PeriodicTask.objects.filter(name="live-game-data").first()
     # if task:
     #     if task.enabled == True:

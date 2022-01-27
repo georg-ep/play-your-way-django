@@ -17,25 +17,25 @@ location = lambda x: os.path.join(os.path.dirname(os.path.realpath(__file__)), x
 env = environ.Env(DEBUG=(bool, False), ALLOWED_HOSTS=(list, ["*"]))
 env.read_env()
 
-try:
-    _, os.environ["GOOGLE_CLOUD_PROJECT"] = google.auth.default()
-    print("Success auth by google", os.environ["GOOGLE_CLOUD_PROJECT"])
-except google.auth.exceptions.DefaultCredentialsError:
-    pass
+# try:
+#     _, os.environ["GOOGLE_CLOUD_PROJECT"] = google.auth.default()
+#     print("Success auth by google", os.environ["GOOGLE_CLOUD_PROJECT"])
+# except google.auth.exceptions.DefaultCredentialsError:
+#     pass
 
-IS_DEVELOPMENT = bool(int(os.environ.get("IS_DEVELOPMENT", False)))
-print(IS_DEVELOPMENT, "is_development")
-if not IS_DEVELOPMENT:
-    # Pull secrets from Secret Manager
-    project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
+# IS_DEVELOPMENT = bool(int(os.environ.get("IS_DEVELOPMENT", False)))
+# print(IS_DEVELOPMENT, "is_development")
+# if not IS_DEVELOPMENT:
+#     # Pull secrets from Secret Manager
+#     project_id = os.environ.get("GOOGLE_CLOUD_PROJECT")
 
-    client = secretmanager.SecretManagerServiceClient()
-    settings_name = os.environ.get("SETTINGS_NAME", "django-settings")
-    name = f"projects/{project_id}/secrets/{settings_name}/versions/latest"
-    payload = client.access_secret_version(name=name).payload.data.decode("UTF-8")
-    print(payload, "settings loaded")
-    env.read_env(io.StringIO(payload))
-print(env)
+#     client = secretmanager.SecretManagerServiceClient()
+#     settings_name = os.environ.get("SETTINGS_NAME", "django-settings")
+#     name = f"projects/{project_id}/secrets/{settings_name}/versions/latest"
+#     payload = client.access_secret_version(name=name).payload.data.decode("UTF-8")
+#     print(payload, "settings loaded")
+#     env.read_env(io.StringIO(payload))
+# print(env)
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get(
     "SECRET_KEY", "sdfm-bci^u39bw19op25fv@x)*zh7%!q!(@j3r1jez50--sdtd1w2132"
@@ -44,7 +44,7 @@ SECRET_KEY = os.environ.get(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(int(os.environ.get("DEBUG", False)))
 print(DEBUG)
-ALLOWED_HOSTS = ["localhost", "pfld-sandbox-voiuolbq7q-ey.a.run.app"]
+ALLOWED_HOSTS = ["localhost", "pfld-sandbox-voiuolbq7q-ey.a.run.app", "https://calm-shore-12479.herokuapp.com/"]
 if DEBUG:
     ALLOWED_HOSTS += [
         "192.168.{}.{}".format(i, j) for i in range(256) for j in range(256)

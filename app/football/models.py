@@ -16,6 +16,11 @@ class Team(models.Model):
         null=True,
         blank=True,
     )
+    crest = models.URLField(
+      default=None,
+      null=True,
+      blank=True,
+    )
 
     def __str__(self):
         return self.name

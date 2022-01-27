@@ -6,7 +6,7 @@ from core.redis import redis_storage
 import requests
 from storages.utils import setting
 import json
-from football.models import SeasonInfo, Match
+from football.models import SeasonInfo, Match, Team
 from .celery import app as celery_app
 
 
@@ -86,39 +86,59 @@ def fetch_games_data():
     response = requests.get(API_URL + "competitions/PL/matches/", headers=headers)
     matches = json.loads(response.content)["matches"]
 
+    new_data = False
+
     for match in matches:
         d_match = Match.objects.filter(match_id=match["id"]).first()
+        
+        if d_match == None:
+          # create new match if one doesn't exist.
+          print("Creating new match")
+          new_data = True
+          homeTeam = Team.objects.filter(team_id=match["homeTeam"]["id"]).first()
+          awayTeam = Team.objects.filter(team_id=match["awayTeam"]["id"]).first()
+          d_match = Match(
+            match_id=match["id"],
+            awayTeam=awayTeam,
+            homeTeam=homeTeam,
+            gameweek=match["matchday"],
+          )
 
-        if d_match != None:
-
+        winner = None
+        if match["score"]["winner"] == "HOME_TEAM":
+            winner = match["homeTeam"]["name"]
+        elif match["score"]["winner"] == "AWAY_TEAM":
+            winner = match["awayTeam"]["name"]
+        elif match["score"]["winner"] == "DRAW":
+            winner = "Draw"
+        else:
             winner = None
-            if match["score"]["winner"] == "HOME_TEAM":
-                winner = match["homeTeam"]["name"]
-            elif match["score"]["winner"] == "AWAY_TEAM":
-                winner = match["awayTeam"]["name"]
-            elif match["score"]["winner"] == "DRAW":
-                winner = "Draw"
-            else:
-                winner = None
-            d_match.winner = winner
+        d_match.winner = winner
 
-            score = match["score"]["fullTime"]
+        score = match["score"]["fullTime"]
 
-            if score["homeTeam"] != d_match.home_goals or score["awayTeam"] != d_match.away_goals:
-                print("score changed for", d_match)
-                d_match.away_goals = score["awayTeam"]
-                d_match.home_goals = score["homeTeam"]
-            
+        if score["homeTeam"] != d_match.home_goals or score["awayTeam"] != d_match.away_goals:
+            new_data = True
+            print("score changed for", d_match)
+            d_match.away_goals = score["awayTeam"]
+            d_match.home_goals = score["homeTeam"]
+        
 
-            if d_match.status != match["status"]:
-                print("status changed for", match)
-                d_match.status = match["status"]
+        if d_match.status != match["status"]:
+            new_data = True
+            print("status changed for", d_match)
+            d_match.status = match["status"]
 
-            match_date = datetime.strptime(match["utcDate"], "%Y-%m-%dT%H:%M:%SZ")
-            date_changed = d_match.date != match_date
-            if date_changed:
-                print("date changed for", d_match)
-                print("from", d_match.date, "to", match_date)
-                d_match.date = match_date
-            
-            d_match.save()
+        match_date = datetime.strptime(match["utcDate"], "%Y-%m-%dT%H:%M:%SZ")
+        date_changed = d_match.date != match_date
+        if date_changed:
+            new_data = True
+            print("date changed for", d_match)
+            d_match.date = match_date
+        
+        d_match.save()
+  
+    if not new_data: print("No new data found")
+
+
+

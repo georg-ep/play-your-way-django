@@ -146,11 +146,14 @@ AUTHENTICATION_BACKENDS = (
     "guardian.backends.ObjectPermissionBackend",
 )
 
+import dj_database_url
+
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 if os.environ.get("DATABASE_URL"):
     db = env.db()
-    print(env.db(), "DATA_BASE_ACCESS")
+    db_from_env = dj_database_url.config(default=os.environ.get("DATABASE_URL"), conn_max_age=500, ssl_require=True)
+    print("using db_from_env")
 else:
     db = {
         "ENGINE": "django.db.backends.postgresql",

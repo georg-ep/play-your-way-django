@@ -89,6 +89,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -152,7 +153,9 @@ import dj_database_url
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 if os.environ.get("DATABASE_URL"):
     db = env.db()
-    db_from_env = dj_database_url.config(default=os.environ.get("DATABASE_URL"), conn_max_age=500, ssl_require=True)
+    db_from_env = dj_database_url.config(
+        default=os.environ.get("DATABASE_URL"), conn_max_age=500, ssl_require=True
+    )
     print("using db_from_env")
 else:
     db = {
@@ -210,12 +213,20 @@ GS_MEDIA_BUCKET_NAME = os.environ.get("GS_MEDIA_BUCKET_NAME")
 # MEDIA_URL = os.environ.get("STORAGE_PUBLIC_PATH").format(GS_MEDIA_BUCKET_NAME)
 # MEDIA_ROOT = os.environ.get("STORAGE_MEDIA_ROOT")
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
+MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
 # STATIC_URL = os.environ.get("STORAGE_PUBLIC_PATH").format(GS_STATIC_BUCKET_NAME)
 # STATIC_ROOT = os.environ.get("STORAGE_STATIC_ROOT")
+
+
 
 FOOTBALL_URL = "https://api.football-data.org/v2/"
 
@@ -258,7 +269,7 @@ DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG = {
     "OPTIONS": {"min_number": 10000, "max_number": 99999},
 }
 
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
 CELERY_BEAT_SCHEDULE = {
     # Print text each minute
@@ -268,10 +279,9 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": timedelta(days=1),
     },
     "fetch-games-data": {
-      "task": "fetch-games-data",
-      "schedule": timedelta(days=1),
+        "task": "fetch-games-data",
+        "schedule": timedelta(days=1),
     },
-
 }
 
 # All celery tasks

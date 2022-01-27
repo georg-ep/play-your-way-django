@@ -204,11 +204,15 @@ STATICFILES_STORAGE = os.environ.get("STATIC_STORAGE")
 GS_STATIC_BUCKET_NAME = os.environ.get("GS_STATIC_BUCKET_NAME")
 GS_MEDIA_BUCKET_NAME = os.environ.get("GS_MEDIA_BUCKET_NAME")
 
-MEDIA_URL = os.environ.get("STORAGE_PUBLIC_PATH").format(GS_MEDIA_BUCKET_NAME)
-MEDIA_ROOT = os.environ.get("STORAGE_MEDIA_ROOT")
+# MEDIA_URL = os.environ.get("STORAGE_PUBLIC_PATH").format(GS_MEDIA_BUCKET_NAME)
+# MEDIA_ROOT = os.environ.get("STORAGE_MEDIA_ROOT")
+MEDIA_URL = "/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, 'mediafiles')
 
-STATIC_URL = os.environ.get("STORAGE_PUBLIC_PATH").format(GS_STATIC_BUCKET_NAME)
-STATIC_ROOT = os.environ.get("STORAGE_STATIC_ROOT")
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_URL = os.environ.get("STORAGE_PUBLIC_PATH").format(GS_STATIC_BUCKET_NAME)
+# STATIC_ROOT = os.environ.get("STORAGE_STATIC_ROOT")
 
 FOOTBALL_URL = os.environ.get("FOOTBALL_URL")
 

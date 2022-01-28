@@ -22,8 +22,8 @@ RUN mkdir /tmp/runtime-user
 RUN python manage.py collectstatic --noinput
 
 # add and run as non-root user
-RUN adduser -D myuser
-USER myuser
+# RUN adduser -D myuser
+# USER myuser
 
 ENTRYPOINT ["/scripts/server_run.sh"]
 

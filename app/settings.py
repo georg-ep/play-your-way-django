@@ -205,8 +205,8 @@ AUTH_USER_MODEL = "user.User"
 
 GOOGLE_AUTH_BASE_URL = "https://www.googleapis.com/oauth2/v3/userinfo?alt=json"
 
-DEFAULT_FILE_STORAGE = os.environ.get("STORAGE")
-STATICFILES_STORAGE = os.environ.get("STATIC_STORAGE")
+# DEFAULT_FILE_STORAGE = os.environ.get("STORAGE")
+# STATICFILES_STORAGE = os.environ.get("STATIC_STORAGE")
 GS_STATIC_BUCKET_NAME = os.environ.get("GS_STATIC_BUCKET_NAME")
 GS_MEDIA_BUCKET_NAME = os.environ.get("GS_MEDIA_BUCKET_NAME")
 
@@ -216,16 +216,15 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+print(BASE_DIR)
 
 # Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 # STATIC_URL = os.environ.get("STORAGE_PUBLIC_PATH").format(GS_STATIC_BUCKET_NAME)
 # STATIC_ROOT = os.environ.get("STORAGE_STATIC_ROOT")
-
 
 
 FOOTBALL_URL = "https://api.football-data.org/v2/"

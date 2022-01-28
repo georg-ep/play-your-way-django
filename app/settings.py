@@ -300,7 +300,12 @@ CELERY_TASK_ROUTES = {
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
 REDIS_SERVER = os.environ.get("REDIS_SERVER")
 REDIS_APP_DB = os.environ.get("REDIS_APP_DB")
-CELERY_BROKER_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_SERVER}/{REDIS_APP_DB}"
+if os.environ.get("REDIS_URL"):
+  CELERY_BROKER_URL = os.environ.get("REDIS_URL")
+  CELERY_RESULT_BACKEND=os.environ.get("REDIS_URL")
+  print("Using heroku redis")
+else:
+  CELERY_BROKER_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_SERVER}/{REDIS_APP_DB}"
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {

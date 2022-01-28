@@ -4,4 +4,5 @@ build:
     worker: celery.dockerfile
 run:
   web: gunicorn --bind 0.0.0.0:$PORT --workers 1 --threads 8 --timeout 0 wsgi:application
-  worker: celery -A app worker -l INFO --beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+  worker: celery -A app worker -events -loglevel info 
+  beat: celery -A app beat 

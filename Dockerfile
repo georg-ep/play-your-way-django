@@ -18,7 +18,12 @@ COPY ./scripts /scripts
 COPY .env /.env
 RUN mkdir /tmp/runtime-user
 
-CMD gunicorn --bind 0.0.0.0:$PORT wsgi
+# collect static files
+RUN python manage.py collectstatic --noinput
+
+# add and run as non-root user
+RUN adduser -D myuser
+USER myuser
 
 ENTRYPOINT ["/scripts/server_run.sh"]
 

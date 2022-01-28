@@ -149,6 +149,7 @@ AUTHENTICATION_BACKENDS = (
 
 import dj_database_url
 
+
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 if os.environ.get("DATABASE_URL"):

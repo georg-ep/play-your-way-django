@@ -7,6 +7,9 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'settings')
 
 app = Celery('worker')
 
+app.conf.update(BROKER_URL=os.environ['REDIS_URL'],
+                CELERY_RESULT_BACKEND=os.environ['REDIS_URL'])
+
 # Using a string here means the worker doesn't have to serialize
 # the configuration object to child processes.
 # - namespace='CELERY' means all celery-related configuration keys

@@ -25,9 +25,6 @@ class Bet(models.Model):
         Match,
         on_delete=models.CASCADE,
     )
-    is_draw = models.BooleanField(
-        default=False,
-    )
     winner = models.ForeignKey(
         Team,
         on_delete=models.SET_NULL,
@@ -51,6 +48,17 @@ class Bet(models.Model):
         decimal_places=2,
         max_digits=9,
     )
+    accepted_at = models.DateTimeField(
+      null=True,
+      blank=True,
+    )
+    bet_winner = models.ForeignKey(
+      "user.User",
+      on_delete=models.SET_NULL,
+      blank=True,
+      null=True,
+    )
+    is_settled = models.BooleanField(default=False)
 
     def __str__(self):
         prefix = "open:"
@@ -87,3 +95,4 @@ class BetScorer(models.Model):
 
     def __str__(self):
         return f"{self.player.name} to score"
+

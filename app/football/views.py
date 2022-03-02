@@ -9,6 +9,7 @@ from .models import Match, SeasonInfo, Team, Player
 from datetime import date, datetime, timedelta, tzinfo
 from football import serializers
 import django_filters.rest_framework
+from rest_framework import filters
 
 # Create your views here.
 
@@ -29,8 +30,28 @@ class DetailTeamView(generics.RetrieveAPIView):
 #     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
 #     filterset_fields = ["gameweek"]
 
+class ListUpcomingMatchesView(generics.ListAPIView):
+    queryset = Match.objects.all()
+    serializer_class = serializers.MatchListSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        current = datetime.now()
+        return queryset.filter(date__gt=current)
 
 class ListMatchView(generics.ListAPIView):
+    queryset = Match.objects.all()
+    serializer_class = serializers.MatchListSerializer
+    filter_backends = [
+        django_filters.rest_framework.DjangoFilterBackend,
+        filters.SearchFilter,
+    ]
+    filterset_fields = ["status"]
+    search_fields = ["homeTeam__name", "awayTeam__name"]
+    ordering = ["-date"]
+
+
+class GameweekMatchView(generics.ListAPIView):
     serializer_class = serializers.MatchListSerializer
     queryset = Match.objects.all()
 
@@ -86,7 +107,6 @@ def test(request):
         l_team.crest = team["crestUrl"]
         l_team.save()
         print("saving crest")
-      
 
     # lb = datetime.now(tz=timezone.utc)
     # ub = datetime.now(tz=timezone.utc) + timedelta(days=1)

@@ -3,6 +3,7 @@ from .models import Bet, BetScorer
 from user.serializers import UserDetailSerializer
 from football.serializers import MatchListSerializer, PlayerDetailSerializer
 import json
+from football.serializers import TeamSerializer
 
 
 class CreateBetSerializer(serializers.ModelSerializer):
@@ -29,6 +30,7 @@ class ListBetSerializer(serializers.ModelSerializer):
     match = MatchListSerializer()
     opponent = serializers.SerializerMethodField()
     scorers = BetScorerDetailSerializer(many=True, read_only=True)
+    winner = TeamSerializer()
 
     def get_opponent(self, obj):
         user = self.context["request"].user
@@ -41,4 +43,4 @@ class ListBetSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bet
-        fields = ["id", "opponent", "match", "amount", "winner", "is_draw", "scorers"]
+        fields = ["id", "opponent", "match", "amount", "winner", "scorers"]

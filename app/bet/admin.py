@@ -11,5 +11,5 @@ class BetScorerAdmin(admin.ModelAdmin):
 
 @admin.register(Bet)
 class BetAdmin(admin.ModelAdmin):
-    readonly_fields = ["created_at", "match", "is_draw", "winner", "user1", "user2", "is_accepted", "amount"]
+    readonly_fields = []
 

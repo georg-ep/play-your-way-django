@@ -1,0 +1,16 @@
+11am every morning check for games in 24h window
+- For every game create a periodic task to begin at the time of the match
+    - This periodic task will contain the id of the match
+
+Once the time of the match comes and the periodic timer starts:
+- Fetch data from the football fixture every minute and detect changes 
+  - When changes happen inside the game update the model on our end
+
+Once the game state changes to finished
+- stop the periodic timer
+- run function in next stage
+
+Function will gather all bets involved with the game id
+- bet instances will update with the winner
+  - then distribute the rewards to the winner (if there is one)
+  - bet becomes settled

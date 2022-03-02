@@ -27,6 +27,8 @@ django-nested-admin==3.3.3
 dj-database-url==0.5.0
 
 whitenoise==5.3.0
+channels==3.0.4
+channels-redis==3.3.1
 
 # Swagger substitute for Django 3
 drf-yasg==1.20.0

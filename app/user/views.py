@@ -101,6 +101,12 @@ class AddressView(CreateAPIView, RetrieveAPIView, UpdateAPIView):
     def get_object(self):
         return Address.objects.filter(user=self.request.user).first()
 
+class UpdateUserView(UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = serializers.UpdateUserSerializer
+
+    def get_object(self):
+        return self.request.user
 
 class AvatarView(UpdateAPIView):
     serializer_class = serializers.AvatarSerializer

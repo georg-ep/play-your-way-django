@@ -23,6 +23,10 @@ def accept_bet(request, bet_id):
     return Response({"status": "OK"})
 
 
+class DetailBetView(generics.RetrieveAPIView):
+    queryset = Bet.objects.all()
+    serializer_class = ListBetSerializer
+
 class CreateBetScorerView(generics.CreateAPIView):
     serializer_class = BetScorerSerializer
 
@@ -37,7 +41,9 @@ class MyBets(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Bet.objects.filter((Q(user1=user) | Q(user2=user)) & Q(is_accepted=True))
+        queryset = Bet.objects.filter(Q(user1=user) | Q(user2=user))
+        queryset = queryset.filter(is_accepted=True)
+        return queryset
 
 
 class ListPendingBetsView(generics.ListAPIView):
@@ -45,8 +51,14 @@ class ListPendingBetsView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return Bet.objects.filter(user2=user).filter(is_accepted=False)
+        return Bet.objects.filter(user1=user).filter(is_accepted=False)
 
+class ListReceivedBetsView(generics.ListAPIView):
+    serializer_class = ListBetSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Bet.objects.filter(user2=user).filter(is_accepted=False)
 
 # class ListConfirmedBetsView(generics.ListAPIView):
 #   serializer_class = ListBetSerializer

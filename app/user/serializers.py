@@ -1,3 +1,4 @@
+from re import L
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -11,6 +12,7 @@ from hashids import Hashids
 import settings
 from core import response, exception
 from user.models import User, Address
+from bet import models as bet_models
 
 
 def raise_400(detail):
@@ -123,16 +125,41 @@ class AddressSerializer(serializers.ModelSerializer):
         exclude = ("user",)
 
 
-class UserDetailSerializer(serializers.ModelSerializer):
+class UpdateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("id", "email", "name")
+        optional_fields = ["last_name", "is_onboarded", "email"]
+        fields = [
+            "first_name",
+        ]
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    received_bets_amount = serializers.SerializerMethodField()
+
+    def get_received_bets_amount(self, obj):
+        return (
+            bet_models.Bet.objects.filter(user2=obj).filter(is_accepted=False).count()
+        )
+
+    class Meta:
+        model = User
+        fields = (
+            "id",
+            "email",
+            "received_bets_amount",
+            "is_onboarded",
+            "first_name",
+            "last_name",
+            "uid",
+            "credits",
+        )
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ("email", "name", "surname")
+        fields = ("email", "name")
 
 
 class ChangePasswordSerializer(serializers.ModelSerializer):

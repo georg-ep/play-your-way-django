@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "corsheaders",
+    "channels",
     # 'cachalot',
     "rest_framework",
     "django_rest_passwordreset",
@@ -103,6 +104,8 @@ CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:8080",
     "http://localhost:8080",
     "http://127.0.0.1:3000",
+    "http://localhost:60023",
+    "http://localhost:50485",
     "http://localhost:3000",
     "https://dry-garden-33348.herokuapp.com",
 ]
@@ -199,7 +202,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 AUTH_USER_MODEL = "user.User"
 # Static files (CSS, JavaScript, Images)
@@ -301,12 +304,23 @@ CELERY_TASK_ROUTES = {
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
 REDIS_SERVER = os.environ.get("REDIS_SERVER")
 REDIS_APP_DB = os.environ.get("REDIS_APP_DB")
+CHANNEL_LAYERS_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_SERVER}/{REDIS_APP_DB}"
 if os.environ.get("REDIS_URL"):
   CELERY_BROKER_URL = os.environ.get("REDIS_URL")
   CELERY_RESULT_BACKEND=os.environ.get("REDIS_URL")
   print("Using heroku redis")
 else:
-  CELERY_BROKER_URL = f"redis://:{REDIS_PASSWORD}@{REDIS_SERVER}/{REDIS_APP_DB}"
+  CELERY_BROKER_URL = CHANNEL_LAYERS_URL
+
+ASGI_APPLICATION = "asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis://:12345678@redis:6379/0')],
+        },
+    },
+}
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
